@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rating Page</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lora', Georgia, serif;
+            background-color: #f4efe6;
+            color: #2b2623;
+        }
+        h1, h2, h3, .font-serif-title {
+            font-family: 'Playfair Display', Georgia, serif;
+        }
+        .font-cinzel {
+            font-family: 'Cinzel', serif;
+        }
+        .star {
+            cursor: pointer;
+            transition: color 0.15s ease, transform 0.1s ease;
+        }
+        .star:hover {
+            transform: scale(1.15);
+        }
+        .fade-in {
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 sm:p-6 relative">
+
+    <!-- Vintage Admin Button Top Right -->
+    <button 
+        onclick="openAdminModal()" 
+        class="absolute top-4 right-4 text-xs font-cinzel tracking-widest text-[#786c63] hover:text-[#2b2623] border border-[#d6cbbe] hover:border-[#2b2623] bg-[#eae3d5] px-3.5 py-1.5 rounded transition shadow-sm uppercase"
+    >
+        🔐 Ledger Admin
+    </button>
+
+    <!-- Main Card Container -->
+    <div id="formCard" class="w-full max-w-lg bg-[#faf6f0] border-2 border-[#2b2623] p-8 sm:p-10 shadow-[6px_6px_0px_0px_rgba(43,38,35,1)] relative">
+        
+        <!-- Classic Double Border Frame inside -->
+        <div class="border border-[#b5a797] p-6 sm:p-8">
+            
+            <!-- Header -->
+            <div class="text-center mb-8 border-b border-[#d6cbbe] pb-6">
+                <span class="text-[10px] font-cinzel tracking-[0.25em] text-[#8c7b6c] uppercase block mb-1">Official Registry</span>
+                <h1 class="text-3xl font-bold tracking-tight text-[#2b2623] mb-2">Rate Radio Michael!</h1>
+                <p class="text-xs italic text-[#6e6256]">Please enter your name and experince for our private records.</p>
+            </div>
+
+            <!-- Form -->
+            <form id="ratingForm" class="space-y-6" onsubmit="handleSubmit(event)">
+                
+                <!-- Username Input -->
+                <div>
+                    <label for="username" class="block text-[11px] font-cinzel tracking-widest text-[#2b2623] uppercase mb-1.5 font-bold">Patron Name / Alias</label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        required 
+                        placeholder="e.g. Jonathan Swift" 
+                        class="w-full bg-[#f4efe6] border border-[#9e9081] px-3.5 py-2.5 text-[#2b2623] placeholder-[#a69888] focus:outline-none focus:border-[#2b2623] focus:ring-1 focus:ring-[#2b2623] text-sm font-serif transition"
+                    >
+                </div>
+
+                <!-- Star Rating Section -->
+                <div>
+                    <label class="block text-[11px] font-cinzel tracking-widest text-[#2b2623] uppercase mb-2 text-center font-bold">Assessment</label>
+                    <div id="starContainer" class="flex justify-center space-x-3 text-3xl text-[#d4c9bc]">
+                        <span class="star" data-value="1">★</span>
+                        <span class="star" data-value="2">★</span>
+                        <span class="star" data-value="3">★</span>
+                        <span class="star" data-value="4">★</span>
+                        <span class="star" data-value="5">★</span>
+                    </div>
+                    <input type="hidden" id="ratingValue" required>
+                </div>
+
+                <!-- Reason Box (Appears dynamically) -->
+                <div id="reasonContainer" class="hidden fade-in space-y-1.5 pt-2">
+                    <label for="reason" class="block text-[11px] font-cinzel tracking-widest text-[#2b2623] uppercase font-bold">Remarks & Reasons</label>
+                    <textarea 
+                        id="reason" 
+                        rows="3" 
+                        placeholder="State the reasons for your given rating..." 
+                        class="w-full bg-[#f4efe6] border border-[#9e9081] p-3 text-[#2b2623] placeholder-[#a69888] focus:outline-none focus:border-[#2b2623] focus:ring-1 focus:ring-[#2b2623] text-sm font-serif resize-none transition"
+                    ></textarea>
+                </div>
+
+                <!-- Submit Button -->
+                <button 
+                    type="submit" 
+                    id="submitBtn"
+                    class="w-full bg-[#2b2623] hover:bg-[#453e39] text-[#faf6f0] font-cinzel tracking-widest text-xs font-semibold py-3.5 uppercase border border-[#2b2623] transition shadow-[3px_3px_0px_0px_rgba(181,167,151,1)] active:translate-x-[1px] active:translate-y-[1px]"
+                >
+                    Submit Entry
+                </button>
+            </form>
+
+            <!-- Success Message -->
+            <div id="successMessage" class="hidden text-center py-6 fade-in space-y-4">
+                <div class="text-[#8c6d3b] text-4xl font-serif">✦</div>
+                <h2 class="text-2xl font-serif-title font-bold text-[#2b2623]">Entry Recorded</h2>
+                <p id="successText" class="text-sm italic text-[#5c5247]"></p>
+                <div class="pt-2">
+                    <button onclick="resetForm()" class="text-xs font-cinzel text-[#8c6d3b] hover:underline tracking-wider uppercase">Record Another Entry</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Password Modal -->
+    <div id="authModal" class="hidden fixed inset-0 bg-[#2b2623]/70 backdrop-blur-xs flex items-center justify-center p-4 z-50">
+        <div class="bg-[#faf6f0] border-2 border-[#2b2623] p-6 sm:p-8 w-full max-w-sm space-y-4 shadow-[6px_6px_0px_0px_rgba(43,38,35,1)]">
+            <h3 class="text-lg font-serif-title font-bold text-[#2b2623] border-b border-[#d6cbbe] pb-2">Admin Ledger Access</h3>
+            <p class="text-xs text-[#6e6256] italic">Please present the password to view the records.</p>
+            <input 
+                type="password" 
+                id="adminPassInput" 
+                placeholder="Password" 
+                class="w-full bg-[#f4efe6] border border-[#9e9081] px-3.5 py-2 text-[#2b2623] focus:outline-none focus:border-[#2b2623] text-sm font-serif"
+            >
+            <div id="authError" class="text-red-700 text-xs italic hidden">Invalid credentials. Access denied.</div>
+            <div class="flex justify-end space-x-3 pt-2">
+                <button onclick="closeAuthModal()" class="px-3 py-1.5 text-xs font-cinzel text-[#6e6256] hover:text-[#2b2623]">Cancel</button>
+                <button onclick="verifyPassword()" class="px-4 py-1.5 text-xs font-cinzel bg-[#2b2623] text-[#faf6f0] hover:bg-[#453e39]">Authenticate</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Panel Modal -->
+    <div id="adminPanelModal" class="hidden fixed inset-0 bg-[#2b2623]/70 backdrop-blur-xs flex items-center justify-center p-4 z-40">
+        <div class="bg-[#faf6f0] border-2 border-[#2b2623] p-6 sm:p-8 w-full max-w-2xl max-h-[85vh] flex flex-col space-y-4 shadow-[8px_8px_0px_0px_rgba(43,38,35,1)]">
+            
+            <div class="flex justify-between items-center border-b-2 border-[#2b2623] pb-3">
+                <div>
+                    <span class="text-[10px] font-cinzel tracking-widest text-[#8c7b6c] uppercase block">Confidential</span>
+                    <h2 class="text-xl font-serif-title font-bold text-[#2b2623]">Patron Ratings Ledger</h2>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="clearAllLogs()" class="text-xs font-cinzel text-red-800 hover:underline uppercase tracking-wider">Purge All</button>
+                    <button onclick="closeAdminPanel()" class="text-[#2b2623] hover:opacity-75 text-2xl font-serif">✕</button>
+                </div>
+            </div>
+
+            <!-- Stats Bar -->
+            <div class="grid grid-cols-2 gap-4">
+                <div class="bg-[#f4efe6] border border-[#b5a797] p-3 text-center">
+                    <span class="block text-[10px] font-cinzel tracking-widest text-[#6e6256] uppercase">Total Reviews</span>
+                    <span id="totalCount" class="text-2xl font-serif-title font-bold text-[#2b2623]">0</span>
+                </div>
+                <div class="bg-[#f4efe6] border border-[#b5a797] p-3 text-center">
+                    <span class="block text-[10px] font-cinzel tracking-widest text-[#6e6256] uppercase">Average Score</span>
+                    <span id="avgRating" class="text-2xl font-serif-title font-bold text-[#8c6d3b]">0.0 ★</span>
+                </div>
+            </div>
+
+            <!-- Log List -->
+            <div id="logList" class="flex-1 overflow-y-auto space-y-4 pr-1">
+                <!-- Data populated dynamically -->
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        const ADMIN_PASSWORD = "aaaqqq123";
+
+        // Element refs
+        const stars = document.querySelectorAll('.star');
+        const ratingValueInput = document.getElementById('ratingValue');
+        const reasonContainer = document.getElementById('reasonContainer');
+        const reasonInput = document.getElementById('reason');
+        const ratingForm = document.getElementById('ratingForm');
+        const successMessage = document.getElementById('successMessage');
+        const successText = document.getElementById('successText');
+        
+        let currentRating = 0;
+
+        // Interactive Stars
+        stars.forEach(star => {
+            star.addEventListener('mouseover', () => highlightStars(parseInt(star.getAttribute('data-value'))));
+            star.addEventListener('mouseout', () => highlightStars(currentRating));
+            star.addEventListener('click', () => {
+                currentRating = parseInt(star.getAttribute('data-value'));
+                ratingValueInput.value = currentRating;
+                highlightStars(currentRating);
+                reasonContainer.classList.remove('hidden');
+            });
+        });
+
+        function highlightStars(count) {
+            stars.forEach(star => {
+                const val = parseInt(star.getAttribute('data-value'));
+                if (val <= count) {
+                    star.classList.remove('text-[#d4c9bc]');
+                    star.classList.add('text-[#8c6d3b]');
+                } else {
+                    star.classList.remove('text-[#8c6d3b]');
+                    star.classList.add('text-[#d4c9bc]');
+                }
+            });
+        }
+
+        // Handle Rating Submission
+        function handleSubmit(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value.trim();
+            const reason = reasonInput.value.trim() || "No remarks provided.";
+
+            if (!currentRating) {
+                alert('Please select a rating before submitting.');
+                return;
+            }
+
+            const newLog = {
+                id: Date.now(),
+                username: username,
+                rating: currentRating,
+                reason: reason,
+                timestamp: new Date().toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
+            };
+
+            // Save to LocalStorage
+            const existingLogs = JSON.parse(localStorage.getItem('ratingLogs') || '[]');
+            existingLogs.unshift(newLog);
+            localStorage.setItem('ratingLogs', JSON.stringify(existingLogs));
+
+            // Display Success State
+            ratingForm.classList.add('hidden');
+            successText.textContent = `Thank you, ${username}. Your ${currentRating}-star assessment has been archived in our records.`;
+            successMessage.classList.remove('hidden');
+        }
+
+        function resetForm() {
+            currentRating = 0;
+            ratingValueInput.value = '';
+            document.getElementById('username').value = '';
+            reasonInput.value = '';
+            highlightStars(0);
+            reasonContainer.classList.add('hidden');
+            successMessage.classList.add('hidden');
+            ratingForm.classList.remove('hidden');
+        }
+
+        // Admin Auth & Modal Handlers
+        function openAdminModal() {
+            document.getElementById('authModal').classList.remove('hidden');
+            document.getElementById('adminPassInput').value = '';
+            document.getElementById('authError').classList.add('hidden');
+        }
+
+        function closeAuthModal() {
+            document.getElementById('authModal').classList.add('hidden');
+        }
+
+        function verifyPassword() {
+            const pass = document.getElementById('adminPassInput').value;
+            if (pass === ADMIN_PASSWORD) {
+                closeAuthModal();
+                renderAdminLogs();
+                document.getElementById('adminPanelModal').classList.remove('hidden');
+            } else {
+                document.getElementById('authError').classList.remove('hidden');
+            }
+        }
+
+        function closeAdminPanel() {
+            document.getElementById('adminPanelModal').classList.add('hidden');
+        }
+
+        // Admin Panel Rendering
+        function renderAdminLogs() {
+            const logs = JSON.parse(localStorage.getItem('ratingLogs') || '[]');
+            const logList = document.getElementById('logList');
+            const totalCount = document.getElementById('totalCount');
+            const avgRating = document.getElementById('avgRating');
+
+            totalCount.textContent = logs.length;
+            if (logs.length > 0) {
+                const avg = logs.reduce((acc, log) => acc + log.rating, 0) / logs.length;
+                avgRating.textContent = `${avg.toFixed(1)} ★`;
+            } else {
+                avgRating.textContent = "0.0 ★";
+            }
+
+            if (logs.length === 0) {
+                logList.innerHTML = `<div class="text-center py-8 text-[#8c7b6c] italic text-sm">No entries recorded in the ledger yet.</div>`;
+                return;
+            }
+
+            logList.innerHTML = logs.map(log => `
+                <div class="bg-[#f4efe6] border border-[#b5a797] p-4 flex flex-col justify-between space-y-2 relative">
+                    <div class="flex justify-between items-start border-b border-[#d6cbbe] pb-2">
+                        <div>
+                            <span class="font-serif-title font-bold text-[#2b2623]">${escapeHtml(log.username)}</span>
+                            <span class="text-[11px] text-[#786c63] block font-serif">${log.timestamp}</span>
+                        </div>
+                        <div class="text-[#8c6d3b] text-base">${'★'.repeat(log.rating)}<span class="text-[#d4c9bc]">${'☆'.repeat(5 - log.rating)}</span></div>
+                    </div>
+                    <p class="text-[#453e39] text-sm font-serif italic bg-[#faf6f0] p-3 border border-[#e0d6c9]">${escapeHtml(log.reason)}</p>
+                    <div class="flex justify-end pt-1">
+                        <button onclick="deleteLog(${log.id})" class="text-[11px] font-cinzel text-[#8c7b6c] hover:text-red-800 uppercase tracking-wider">Remove Entry</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteLog(id) {
+            let logs = JSON.parse(localStorage.getItem('ratingLogs') || '[]');
+            logs = logs.filter(log => log.id !== id);
+            localStorage.setItem('ratingLogs', JSON.stringify(logs));
+            renderAdminLogs();
+        }
+
+        function clearAllLogs() {
+            if (confirm("Are you certain you wish to purge all recorded ledger entries?")) {
+                localStorage.removeItem('ratingLogs');
+                renderAdminLogs();
+            }
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>'"]/g, 
+                tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag] || tag)
+            );
+        }
+    </script>
+</body>
+</html>
